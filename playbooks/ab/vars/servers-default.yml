@@ -1,0 +1,20 @@
+skip_clone: false
+
+ab: apache2-utils
+path: "/"
+n: 50000
+c: 150
+
+abToCSV: "abToCSV"
+ab_out: "out.csv"
+
+# process ab --extra_data
+af: "{{ ansible_facts }}"
+extra_data: >
+  iso8601={{ af['date_time']['iso8601'] }}
+  os={{ af['lsb']['id']}}_{{ af['lsb']['release'] }}
+  arc={{ af['architecture'] }}
+  memtotal_mb={{ af['memtotal_mb'] }}
+  disk={{ af['mounts'][0]['size_total'] }}
+  pcores={{ af['processor_cores'] }}
+  vcpus={{ af['processor_vcpus'] }}

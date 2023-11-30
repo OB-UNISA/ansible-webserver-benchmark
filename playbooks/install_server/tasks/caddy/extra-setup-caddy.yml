@@ -1,0 +1,32 @@
+- name: Install dependecies for {{ caddy }}
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - debian-keyring
+    - debian-archive-keyring
+
+- name: Add apt repo for {{ caddy }}
+  block:
+    - name: Add apt key
+      ansible.builtin.apt_key:
+        url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+        state: present
+      retries: 2
+    - name: Add to apt repository
+      ansible.builtin.apt_repository:
+        repo: deb https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+        state: present
+
+- name: Create config file directory for {{ caddy }}
+  ansible.builtin.file:
+    path: /etc/caddy/
+    state: directory
+    mode: "0777"
+
+- name: Copy config file for {{ caddy }}
+  ansible.builtin.copy:
+    src: Caddyfile
+    dest: /etc/caddy/Caddyfile
+    mode: "0777"

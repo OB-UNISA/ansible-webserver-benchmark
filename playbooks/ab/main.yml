@@ -1,0 +1,36 @@
+---
+- name: "Run server {{ server }}"
+  vars:
+    env: dev
+    install_server: install_server
+  hosts: "{{ 'hetzner' if env == 'prod' else 'vagrant'}}"
+
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: Load variables file from {{ install_server }}
+      ansible.builtin.include_vars: "{{ item }}"
+      with_first_found:
+        - "../{{ install_server }}/vars/servers-{{ ansible_os_family }}.yml"
+        - "../{{ install_server }}/vars/servers-default.yml"
+
+    - name: Load variables file
+      ansible.builtin.include_vars: "{{ item }}"
+      with_first_found:
+        - "vars/servers-{{ ansible_os_family }}.yml"
+        - vars/servers-default.yml
+
+    - name: Check valid server variable
+      ansible.builtin.debug:
+        msg: "{{ server }} is valid"
+      failed_when: server not in servers
+      run_once: true
+
+  tasks:
+    - name: Import Server Manage
+      ansible.builtin.import_tasks: ../{{ install_server }}/tasks/server-manage.yml
+
+    - name: Import Apache Benchmark tasks
+      ansible.builtin.import_tasks: tasks/ab.yml

@@ -1,0 +1,15 @@
+- name: Install {{ server }}
+  ansible.builtin.apt:
+    name: "{{ server }}"
+    state: present
+  when: apt_server is undefined
+
+- name: Install {{ apt_server }}
+  ansible.builtin.apt:
+    name: "{{ apt_server }}"
+    state: present
+  when: apt_server is defined
+  retries: 2
+
+- name: Import Server Manage
+  ansible.builtin.import_tasks: tasks/server-manage.yml

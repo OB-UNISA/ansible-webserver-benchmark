@@ -1,0 +1,25 @@
+- name: Run script to add keys for {{ openlitespeed }}
+  ansible.builtin.script: litespeed.sh
+  become: true
+
+- name: Set apt_server variable
+  ansible.builtin.set_fact:
+    apt_server: openlitespeed
+
+- name: Create config file directory for {{ openlitespeed }}
+  ansible.builtin.file:
+    path: /usr/local/lsws/conf/vhosts/Example/
+    state: directory
+    mode: "0777"
+
+- name: Copy vhconf config file for {{ openlitespeed }}
+  ansible.builtin.copy:
+    src: vhconf.conf
+    dest: /usr/local/lsws/conf/vhosts/Example/vhconf.conf
+    mode: "0777"
+
+- name: Copy httpd_config file for {{ openlitespeed }}
+  ansible.builtin.copy:
+    src: httpd_config.conf
+    dest: /usr/local/lsws/conf/httpd_config.conf
+    mode: "0777"

@@ -1,0 +1,35 @@
+- name: Install {{ ab }}
+  ansible.builtin.apt:
+    name: "{{ ab }}"
+    state: present
+
+- name: Run ab
+  ansible.builtin.shell: "ab -n {{ n }} -c {{ c }} http://127.0.0.1{{ path }} > out.txt"
+  changed_when: true
+
+- name: Check if there is already a file {{ ab_out }}
+  ansible.builtin.stat:
+    path: "./{{ ab_out }}"
+  register: out_file
+
+- name: Set var if to append result
+  ansible.builtin.set_fact:
+    out_mode: "{{ '-a' if out_file.stat.exists else '' }}"
+
+- name: Clone abToCSV Git repo
+  ansible.builtin.git:
+    repo: "https://github.com/OB-UNISA/ab-to-csv.git"
+    dest: "./{{ abToCSV }}"
+    single_branch: true
+    version: "a00886c917bd7d6d4ed6f4f187936621e1d9ba03"
+  when: not skip_clone
+  retries: 2
+
+- name: Process ab data
+  ansible.builtin.command: 'python3 ./{{ abToCSV }}/{{ abToCSV }}.py --inp out.txt --out {{ ab_out }} {{ out_mode }} --extra_data "{{ extra_data }}"'
+  changed_when: true
+
+- name: Copy to local {{ ab_out }}
+  ansible.builtin.fetch:
+    src: "./{{ ab_out }}"
+    dest: out

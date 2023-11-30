@@ -1,0 +1,14 @@
+root_dir: /var/www/html
+
+apache: apache2
+nginx: nginx
+lighttpd: lighttpd
+caddy: caddy
+openlitespeed: lshttpd
+
+servers:
+  - "{{ apache }}"
+  - "{{ nginx }}"
+  - "{{ lighttpd }}"
+  - "{{ caddy }}"
+  - "{{ openlitespeed }}"

@@ -1,0 +1,44 @@
+---
+- name: "Run server {{ server }}"
+  vars:
+    env: dev
+  hosts: "{{ 'hetzner' if env == 'prod' else 'vagrant'}}"
+
+  become: true
+  gather_facts: true
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: Load variables file
+      ansible.builtin.include_vars: "{{ item }}"
+      with_first_found:
+        - "vars/servers-{{ ansible_os_family }}.yml"
+        - vars/servers-default.yml
+
+    - name: Check valid server variable
+      ansible.builtin.debug:
+        msg: "{{ server }} is valid"
+      failed_when: server not in servers
+      run_once: true
+
+    - name: Apt update cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 86400 # 24h
+
+  tasks:
+    - name: Import copy files tasks
+      ansible.builtin.import_tasks: tasks/copy-files.yml
+
+    - name: Check if there is extra setup for {{ server }}
+      ansible.builtin.stat:
+        path: "tasks/{{ server }}/extra-setup-{{ server }}.yml"
+      register: extra_setup
+      connection: local
+      become: false
+    - name: Include extra setup for {{ server }}
+      ansible.builtin.include_tasks: "tasks/{{ server }}/extra-setup-{{ server }}.yml"
+      when: extra_setup.stat.exists
+
+    - name: Import server setup tasks
+      ansible.builtin.import_tasks: tasks/server-setup.yml

@@ -1,0 +1,11 @@
+- name: Create config file directory for {{ nginx }}
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d/
+    state: directory
+    mode: "0777"
+
+- name: Copy config file for {{ nginx }}
+  ansible.builtin.copy:
+    src: nginx.conf
+    dest: /etc/nginx/conf.d/nginx.conf
+    mode: "0777"

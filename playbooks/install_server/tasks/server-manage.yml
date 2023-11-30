@@ -1,0 +1,31 @@
+- name: Ensure servers are stopped
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop: "{{ servers }}"
+  failed_when: false
+# Commentout if you do not want to restart the selected server
+# when: item != server
+
+- name: Ensure is started {{ server }}
+  ansible.builtin.service:
+    name: "{{ server }}"
+    state: started
+    enabled: false
+
+- name: Create index file
+  ansible.builtin.copy:
+    dest: "{{ root_dir }}/index.html"
+    content: "{{ server }}"
+    mode: "0777"
+
+- name: Check web server can serve content
+  ansible.builtin.uri:
+    url: http://localhost
+    method: GET
+    return_content: true
+    status_code: 200
+  register: result
+  until: result.content == server
+  retries: 2

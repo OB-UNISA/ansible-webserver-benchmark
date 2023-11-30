@@ -1,0 +1,16 @@
+- name: Create static files directory
+  ansible.builtin.file:
+    path: "{{ root_dir }}"
+    state: directory
+    mode: "0777"
+
+- name: Copy static files
+  ansible.builtin.copy:
+    src: "static-files/{{ item }}"
+    dest: "{{ root_dir }}/{{ item }}"
+    mode: "0777"
+  loop:
+    - "test.html"
+    - "static-20k.html"
+    - "static-2m.html"
+    - "static-20m.html"
