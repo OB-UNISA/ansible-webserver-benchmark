@@ -3,8 +3,8 @@
     name: "{{ ab }}"
     state: present
 
-- name: Run ab
-  ansible.builtin.shell: "ab -n {{ n }} -c {{ c }} http://127.0.0.1{{ path }} > out.txt"
+- name: Increase NOFile limit and Run ab
+  ansible.builtin.shell: "ulimit -n 10000 && ab -n {{ n }} -c {{ c }} http://127.0.0.1{{ path }} > out.txt"
   changed_when: true
 
 - name: Check if there is already a file {{ ab_out }}
