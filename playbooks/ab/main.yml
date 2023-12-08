@@ -7,7 +7,7 @@
 
   become: true
   gather_facts: true
-  any_errors_fatal: true
+  #any_errors_fatal: true
 
   pre_tasks:
     - name: Load variables file from {{ install_server }}
