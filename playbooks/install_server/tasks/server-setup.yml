@@ -4,6 +4,8 @@
     state: present
   when: apt_server is undefined
 
+# this is used when the name of the server is different from the name
+# in the apt repository
 - name: Install {{ apt_server }}
   ansible.builtin.apt:
     name: "{{ apt_server }}"

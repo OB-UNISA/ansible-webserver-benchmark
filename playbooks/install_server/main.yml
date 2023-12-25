@@ -2,7 +2,7 @@
 - name: "Run server {{ server }}"
   vars:
     env: dev
-  hosts: "{{ 'hetzner' if env == 'prod' else 'vagrant'}}"
+  hosts: "{{ 'hetzner' if env == 'prod' else 'vagrant' }}"
 
   become: true
   gather_facts: true

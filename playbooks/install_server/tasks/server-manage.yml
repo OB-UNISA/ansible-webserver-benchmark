@@ -5,7 +5,7 @@
     enabled: false
   loop: "{{ servers }}"
   failed_when: false
-# Commentout if you do not want to restart the selected server
+# Comment out below if you do not want to restart the selected server
 # when: item != server
 
 - name: Ensure is started {{ server }}
@@ -20,6 +20,7 @@
     content: "{{ server }}"
     mode: "0777"
 
+# this is used as a second check to be sure that the selected server is running
 - name: Check web server can serve content
   ansible.builtin.uri:
     url: http://localhost

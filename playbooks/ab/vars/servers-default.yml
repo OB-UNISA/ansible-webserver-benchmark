@@ -1,5 +1,7 @@
+# skip the cloning of the abToCSV repository
 skip_clone: false
 
+# apache benchmark config
 ab: apache2-utils
 path: "/"
 n: 50000

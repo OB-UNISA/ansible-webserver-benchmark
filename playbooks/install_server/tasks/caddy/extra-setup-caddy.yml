@@ -1,4 +1,4 @@
-- name: Install dependecies for {{ caddy }}
+- name: Install dependencies for {{ caddy }}
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
